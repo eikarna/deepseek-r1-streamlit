@@ -135,6 +135,7 @@ def query(payload: Dict[str, Any], api_url: str) -> Optional[Dict[str, Any]]:
             raise Exception("Too many requests. Please try again later.")
         
         response.raise_for_status()
+        print(response)
         return response.json()
     except requests.exceptions.JSONDecodeError as e:
         logger.error(f"API request failed: {str(e)}")

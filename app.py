@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 # Page configuration
 st.set_page_config(
-    page_title="DeepSeek Chatbot - ruslanmv.com",
+    page_title="DeepSeek Chatbot",
     page_icon="🤖",
     layout="centered"
 )

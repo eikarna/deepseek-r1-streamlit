@@ -134,7 +134,10 @@ def query(payload: Dict[str, Any], api_url: str) -> Optional[Dict[str, Any]]:
         if response.status_code == 429:
             raise Exception("Too many requests. Please try again later.")
         
-        # response.raise_for_status()
+        response.raise_for_status()
+        print(response.request.url)
+        print(response.request.headers)
+        print(response.request.body)
         print(response)
         return response.json()
     except requests.exceptions.JSONDecodeError as e:

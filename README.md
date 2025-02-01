@@ -1,6 +1,8 @@
 ---
 title: DeepSeek-R1
-emoji:⚡
+emoji: ⚡
+colorFrom: green
+colorTo: blue
 sdk: streamlit
 sdk_version: "{{sdkVersion}}"
 app_file: app.py

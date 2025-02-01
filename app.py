@@ -36,7 +36,7 @@ def load_model():
             model = AutoModelForCausalLM.from_pretrained(
                 MODEL_NAME,
                 trust_remote_code=True,
-                torch_dtype=torch.bfloat16,
+                torch_dtype=torch.float16,
                 device_map="auto"
             )
             
@@ -71,7 +71,6 @@ def generate_response(prompt: str, settings: Dict[str, Any]) -> str:
         max_new_tokens=settings["max_tokens"],
         temperature=settings["temperature"],
         top_p=settings["top_p"],
-        do_sample=True,
         pad_token_id=st.session_state.tokenizer.eos_token_id
     )
     

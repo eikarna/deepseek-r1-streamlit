@@ -1,6 +1,6 @@
 ---
 title: DeepSeek-R1
-emoji: shark
+emoji:⚡
 colorFrom: white
 colorTo: blue
 sdk: streamlit

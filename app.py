@@ -102,7 +102,8 @@ def handle_chat_interaction(settings: Dict[str, Any]):
                         "max_new_tokens": settings["max_tokens"],
                         "temperature": settings["temperature"],
                         "top_p": settings["top_p"],
-                        "return_full_text": settings["debug_chat"]
+                        "return_full_text": settings["debug_chat"],
+                        "stop_sequences": ["<|endofutterance|>", "<|beginofutterance|>"]  # Add stop sequences
                     }
                 }
 

@@ -1,7 +1,7 @@
 ---
 title: DeepSeek-R1
 emoji:⚡
-colorFrom: white
+colorFrom: #FFFFFF
 colorTo: blue
 sdk: streamlit
 sdk_version: "{{sdkVersion}}"

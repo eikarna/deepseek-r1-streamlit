@@ -47,7 +47,8 @@ def configure_sidebar() -> Dict[str, Any]:
             ),
             "max_tokens": st.slider("Max Tokens", 10, 4000, 100),
             "temperature": st.slider("Temperature", 0.1, 4.0, 0.3),
-            "top_p": st.slider("Top-p", 0.1, 1.0, 0.6)
+            "top_p": st.slider("Top-p", 0.1, 1.0, 0.6),
+            "debug_chat": st.toggle("Return Full Text (Debugging Only)")
         }
 
 def format_deepseek_prompt(system_message: str, user_input: str) -> str:
@@ -100,7 +101,8 @@ def handle_chat_interaction(settings: Dict[str, Any]):
                     "parameters": {
                         "max_new_tokens": settings["max_tokens"],
                         "temperature": settings["temperature"],
-                        "top_p": settings["top_p"]
+                        "top_p": settings["top_p"],
+                        "return_full_text": settings["debug_chat"]
                     }
                 }
 

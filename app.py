@@ -27,32 +27,15 @@ logger = logging.getLogger(__name__)
 def load_embedding_model():
     return SentenceTransformer('all-MiniLM-L6-v2')
 
-# Vector store class
+# Modified Vector Store Class
 class SimpleVectorStore:
-    def __init__(self, file_path: str = "vector_store.pkl"):
-        self.file_path = file_path
+    def __init__(self):
         self.documents = []
         self.embeddings = []
-        self.load()
-
-    def load(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, 'rb') as f:
-                data = pickle.load(f)
-                self.documents = data['documents']
-                self.embeddings = data['embeddings']
-
-    def save(self):
-        with open(self.file_path, 'wb') as f:
-            pickle.dump({
-                'documents': self.documents,
-                'embeddings': self.embeddings
-            }, f)
 
     def add_document(self, text: str, embedding: np.ndarray):
         self.documents.append(text)
         self.embeddings.append(embedding)
-        self.save()
 
     def search(self, query_embedding: np.ndarray, top_k: int = 3) -> List[str]:
         if not self.embeddings:
@@ -144,20 +127,15 @@ def query(payload: Dict[str, Any], api_url: str) -> Optional[Dict[str, Any]]:
         logger.error(f"API request failed: {str(e)}")
         raise
 
+# Enhanced response validation
 def process_response(response: Dict[str, Any]) -> str:
-    """Process and clean up the model's response."""
     if not isinstance(response, list) or not response:
         raise ValueError("Invalid response format")
     
-    text = response[0]['generated_text'].strip()
-    cleanup_patterns = [
-        "Assistant:", "AI:", "</think>", "<think>",
-        "\n\nHuman:", "\n\nUser:"
-    ]
-    for pattern in cleanup_patterns:
-        text = text.replace(pattern, "").strip()
+    if 'generated_text' not in response[0]:
+        raise ValueError("Unexpected response structure")
     
-    return text
+    text = response[0]['generated_text'].strip()
 
 # Page configuration
 st.set_page_config(
@@ -235,28 +213,31 @@ if prompt := st.chat_input("Type your message..."):
 
     try:
         with st.spinner("Generating response..."):
-            # Get relevant context from vector store
             embedding_model = load_embedding_model()
             query_embedding = embedding_model.encode(prompt)
             relevant_contexts = st.session_state.vector_store.search(query_embedding)
             
-            # Prepare context-enhanced prompt
-            context_text = "\n".join(relevant_contexts)
-            full_prompt = f"""Context information:
-{context_text}
+            # Dynamic context handling
+            context_text = "\n".join(relevant_contexts) if relevant_contexts else ""
+            system_msg = (
+                f"{system_message} Use the provided context to answer accurately."
+                if context_text 
+                else system_message
+            )
 
-System: {system_message}
-
-User: {prompt}
-Assistant: Let me help you based on the provided context."""
+            # Format for DeepSeek model
+            full_prompt = f"""<|beginofutterance|>System: {system_msg}
+{context_text if context_text else ''}
+<|endofutterance|>
+<|beginofutterance|>User: {prompt}<|endofutterance|>
+<|beginofutterance|>Assistant:"""
 
             payload = {
                 "inputs": full_prompt,
                 "parameters": {
                     "max_new_tokens": max_tokens,
                     "temperature": temperature,
-                    "top_p": top_p,
-                    "return_full_text": False
+                    "top_p": top_p
                 }
             }
 

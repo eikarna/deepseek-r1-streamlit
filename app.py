@@ -7,7 +7,7 @@ from typing import Dict, Any
 DEFAULT_SYSTEM_PROMPT = """You are a friendly Assistant. Provide clear, accurate, and brief answers. 
 Keep responses polite, engaging, and to the point. If unsure, politely suggest alternatives."""
 
-MODEL_NAME = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"  # Directly specify model
+MODEL_NAME = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"  # Directly specify model
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Page configuration
@@ -59,7 +59,8 @@ def configure_sidebar() -> Dict[str, Any]:
 
 def format_prompt(system_message: str, user_input: str) -> str:
     """Format prompt according to model's required template"""
-    return f"""<|begin_of_sentence|>System: {system_message}<|User|>{user_input}<|Assistant|>"""
+    return f"""<|begin_of_sentence|>System: {system_message}
+<|User|>{user_input}<|Assistant|>"""
 
 def generate_response(prompt: str, settings: Dict[str, Any]) -> str:
     """Generate response using local model"""
@@ -76,6 +77,8 @@ def generate_response(prompt: str, settings: Dict[str, Any]) -> str:
     
     response = st.session_state.tokenizer.decode(outputs[0], skip_special_tokens=True)
     response = response.split("\n</think>\n")[0].strip()
+    response = response.replace("<|User|>", "").strip()
+    response = response.replace("<|System|>", "").strip()
     return response.split("<|Assistant|>")[-1].strip()
 
 def handle_chat_interaction(settings: Dict[str, Any]):

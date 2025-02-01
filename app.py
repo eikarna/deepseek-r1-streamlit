@@ -11,12 +11,16 @@ logger = logging.getLogger(__name__)
 DEFAULT_SYSTEM_PROMPT = """You are a friendly Assistant. Provide clear, accurate, and brief answers. 
 Keep responses polite, engaging, and to the point. If unsure, politely suggest alternatives."""
 
-MODEL_OPTIONS = ["deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"]
+MODEL_OPTIONS = [
+    "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+    "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+    "deepseek-ai/DeepSeek-R1"
+]
 API_BASE_URL = "https://api-inference.huggingface.co/models/"
 
 # Page configuration
 st.set_page_config(
-    page_title="DeepSeek-AI R1 (32B)",
+    page_title="DeepSeek-AI R1",
     page_icon="🤖",
     layout="centered"
 )

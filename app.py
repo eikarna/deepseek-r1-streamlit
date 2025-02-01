@@ -221,7 +221,7 @@ if prompt := st.chat_input("Type your message..."):
             context_text = "\n".join(relevant_contexts) if relevant_contexts else ""
             system_msg = (
                 f"{system_message} Use the provided context to answer accurately."
-                if context_text 
+                if context_text
                 else system_message
             )
 
@@ -237,7 +237,8 @@ if prompt := st.chat_input("Type your message..."):
                 "parameters": {
                     "max_new_tokens": max_tokens,
                     "temperature": temperature,
-                    "top_p": top_p
+                    "top_p": top_p,
+                    "return_full_text": False
                 }
             }
 

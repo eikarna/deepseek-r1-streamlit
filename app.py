@@ -59,9 +59,7 @@ def configure_sidebar() -> Dict[str, Any]:
 
 def format_prompt(system_message: str, user_input: str) -> str:
     """Format prompt according to model's required template"""
-    return f"""<｜begin▁of▁sentence｜>System: {system_message}
-User: {user_input}
-Assistant: """
+    return f"""<|begin_of_sentence|>System: {system_message}<|User|>{user_input}<|Assistant|>"""
 
 def generate_response(prompt: str, settings: Dict[str, Any]) -> str:
     """Generate response using local model"""
@@ -77,7 +75,8 @@ def generate_response(prompt: str, settings: Dict[str, Any]) -> str:
     )
     
     response = st.session_state.tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return response.split("Assistant:")[-1].strip()
+    response = response.split("\n</think>\n")[0].strip()
+    return response.split("<|Assistant|>")[-1].strip()
 
 def handle_chat_interaction(settings: Dict[str, Any]):
     """Manage chat interactions"""
@@ -114,7 +113,7 @@ def main():
     load_model()  # Load model before anything else
     settings = configure_sidebar()
     
-    st.title("🤖 DeepSeek Chatbot (Local)")
+    st.title("🤖 DeepSeek Chat")
     st.caption(f"Running {MODEL_NAME} directly on {DEVICE.upper()}")
     
     display_chat_history()

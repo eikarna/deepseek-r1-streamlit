@@ -53,10 +53,8 @@ def configure_sidebar() -> Dict[str, Any]:
 
 def format_deepseek_prompt(system_message: str, user_input: str) -> str:
     """Format the prompt according to DeepSeek's required structure"""
-    return f"""<|beginofutterance|>System: {system_message}
-<|endofutterance|>
-<|beginofutterance|>User: {user_input}<|endofutterance|>
-<|beginofutterance|>Assistant:"""
+    return f"""System: {system_message}
+<|User|>{user_input}<|Assistant|>"""
 
 def query_hf_api(payload: Dict[str, Any], api_url: str) -> Optional[Dict[str, Any]]:
     """Handle API requests with improved error handling"""
@@ -103,7 +101,6 @@ def handle_chat_interaction(settings: Dict[str, Any]):
                         "temperature": settings["temperature"],
                         "top_p": settings["top_p"],
                         "return_full_text": settings["debug_chat"],
-                        "stop_sequences": ["<|endofutterance|>", "<|beginofutterance|>"]  # Add stop sequences
                     }
                 }
 
@@ -114,7 +111,7 @@ def handle_chat_interaction(settings: Dict[str, Any]):
                     if 'generated_text' in output[0]:
                         response_text = output[0]['generated_text'].strip()
                         # Remove any remaining special tokens
-                        response_text = response_text.replace("<|endofutterance|>", "").strip()
+                        response_text = response_text.split("\n</think>\n")[0].strip()
                         
                         # Display and store response
                         with st.chat_message("assistant"):
@@ -145,6 +142,7 @@ def main():
     settings = configure_sidebar()
     
     st.title("🤖 DeepSeek Chatbot")
+    st.caption(f"Current Model: {settings['model']}")
     st.caption("Powered by Hugging Face Inference API - Configure in sidebar")
     
     display_chat_history()
